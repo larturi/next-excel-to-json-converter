@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export function UploadFile() {
    const [file, setFile] = useState<File>();
@@ -9,6 +12,10 @@ export function UploadFile() {
    const copyToClipboard = () => {
       if (Object.keys(jsonData).length > 0) {
          navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
+         toast.success('Text copied to clipboard', {
+            position: 'top-right',
+            autoClose: 1000,
+         });
       }
    };
 
@@ -61,19 +68,20 @@ export function UploadFile() {
                />
             </label>
 
-
             <input
                type='submit'
                value='Upload'
-               className='bg-blue-500 text-white p-2 rounded-md ml-2 cursor-pointer'
+               className='bg-blue-500 text-white py-2 px-3 rounded-md ml-2 cursor-pointer'
             />
 
-            <button
-               onClick={copyToClipboard}
-               className='bg-green-500 text-white p-2 rounded-md cursor-pointer m-2'
-            >
-               Copiar al Portapapeles
-            </button>
+            { Object.keys(jsonData).length > 0 &&
+               <button
+                  onClick={copyToClipboard}
+                  className='bg-green-700 text-white py-2 px-3 rounded-md cursor-pointer m-2'
+               >
+                  Copiar al Portapapeles
+               </button>
+            }
          </form>
 
          {Object.keys(jsonData).length > 0 ? (
@@ -85,10 +93,8 @@ export function UploadFile() {
                </pre>
             </div>
          ) : (
-            <div className='bg-gray-900 p-[300px] rounded-md'>
-               <pre>
-                  <code className='text-green-400'></code>
-               </pre>
+            <div className='bg-gray-900 p-[282px] rounded-md flex justify-center'>
+                  <p className='text-gray-600'>Upload Excel File to convert to JSON</p>
             </div>
          )}
       </div>
