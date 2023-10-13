@@ -4,9 +4,9 @@ import XLSX from 'xlsx';
 
 export async function POST(request: NextRequest) {
 
-   const filePath = path.join(process.cwd(), 'public/files', 'excel.xlsx');
+   // const filePath = path.join(process.cwd(), 'public/files', 'excel.xlsx');
 
-   const workbook = XLSX.readFile(filePath);
+   const workbook = XLSX.readFile('/tmp/excel.xlsx');
    const sheet_name_list = workbook.SheetNames;
    var jsonOutput: any[] = [];
 
