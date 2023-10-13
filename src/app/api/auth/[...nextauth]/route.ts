@@ -10,8 +10,8 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
+export const authOptions: AuthOptions = {
 
-const handler = NextAuth({
    adapter: PrismaAdapter(prisma),
    providers: [
       GithubProvider({
@@ -72,6 +72,23 @@ const handler = NextAuth({
       secret: process.env.NEXTAUTH_JWT_SECRET,
    },
    secret: process.env.NEXTAUTH_SECRET,
-});
+}
 
-export { handler as GET, handler as POST };
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST};
+
+
+// import NextAuth from "next-auth"
+// import type { AuthOptions } from "next-auth"
+// import CredentialsProvider from "next-auth/providers/credentials"
+
+// export const authOptions: AuthOptions = {
+  
+
+//   session: { strategy: "jwt" }
+// }
+
+// const handler = NextAuth(authOptions)
+
+// export { handler as GET, handler as POST }
