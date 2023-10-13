@@ -34,7 +34,7 @@ const Login: React.FC<LoginProps> = () => {
          await signIn('credentials', {
             email,
             password,
-            callbackUrl: '/profiles',
+            callbackUrl: '/',
          });
          router.push('/');
       } catch (error) {
@@ -150,12 +150,12 @@ const Login: React.FC<LoginProps> = () => {
                   <div className='flex flex-row items-center gap-4 mt-8 justify-center'>
                      <div
                         onClick={() =>
-                           signIn('google', { callbackUrl: '/profiles' })
+                           signIn('google', { callbackUrl: '/' })
                         }
                         className='
-                            w-10 
-                            h-10 
-                            rounded-full 
+                            w-full
+                            py-2
+                            rounded-md 
                             flex 
                             items-center 
                             justify-center 
@@ -165,27 +165,10 @@ const Login: React.FC<LoginProps> = () => {
                             bg-white
                             '
                      >
-                        <FcGoogle size={32} />
-                     </div>
-                     <div
-                        onClick={() =>
-                           signIn('github', { callbackUrl: '/profiles' })
-                        }
-                        className='
-                            w-10 
-                            h-10 
-                            rounded-full 
-                            flex 
-                            items-center 
-                            justify-center 
-                            cursor-pointer 
-                            hover:opacity-80 
-                            transition 
-                            border-[2px] 
-                            border-white
-                            '
-                     >
-                        <FaGithub size={32} />
+                        <FcGoogle size={32} /> 
+                        <span className='text-gray-500 font-bold ml-3 uppercase'>
+                           {variant === 'login' ? 'Login With Google' : 'Sign up With Google'}
+                        </span>
                      </div>
                   </div>
                   <p className='text-neutral-500 mt-12 text-center'>

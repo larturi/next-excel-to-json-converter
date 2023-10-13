@@ -6,7 +6,13 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { compare } from 'bcrypt';
 import prismadb from '@/app/libs/prismadb';
 
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
+
 const handler = NextAuth({
+   adapter: PrismaAdapter(prisma),
    providers: [
       GithubProvider({
          clientId: process.env.GITHUB_ID || '',
@@ -61,7 +67,6 @@ const handler = NextAuth({
       signIn: '/auth',
    },
    debug: process.env.NODE_ENV === 'development',
-   adapter: PrismaAdapter(prismadb),
    session: { strategy: 'jwt' },
    jwt: {
       secret: process.env.NEXTAUTH_JWT_SECRET,
