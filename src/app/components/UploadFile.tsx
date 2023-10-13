@@ -50,9 +50,9 @@ export function UploadFile() {
    };
 
    return (
-      <div className='bg-gray-800 text-white -mt-20'>
-         <form onSubmit={onSubmit} className='mb-1'>
-            <div className='lg:flex lg:justify-end lg:justify-items-center lg:mr-3 lg:p-0 lg:mt-7 lg:mb-3 gap-3 mt-20 text-center px-3'>
+      <div className='bg-gray-800 text-white py-5'>
+         <form onSubmit={onSubmit}>
+            <div className='lg:flex lg:justify-end lg:justify-items-center lg:mr-3 lg:p-0 lg:mb-3 gap-3 text-center px-3'>
                <div className='bg-gray-700 py-2 px-3 rounded-sm hover:bg-gray-600'>
                   <label className='bg-gray-700 text-white py-2 px-3 cursor-pointer mb-4 w-full hover:bg-gray-600'>
                      {file ? file.name : 'Seleccionar archivo'}
@@ -98,8 +98,8 @@ export function UploadFile() {
                </div>
             </div>
          ) : (
-            <div className='bg-gray-900 py-[330px] flex justify-center'>
-               <p className='text-gray-600'>
+            <div className='bg-gray-900 h-[calc(100vh-100px)] flex justify-center mt-4'>
+               <p className='text-gray-600 self-center'>
                   Upload Excel File to convert to JSON
                </p>
             </div>

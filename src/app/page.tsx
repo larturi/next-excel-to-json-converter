@@ -1,16 +1,5 @@
-'use client';
-
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-import { UploadFile } from "./components/UploadFile";
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-   return (
-      <div>
-         <UploadFile />
-         <ToastContainer position="top-center" autoClose={2000} />
-
-      </div>
-   );
+   redirect('/convert-to-json');
 }
