@@ -7,9 +7,8 @@ export function UploadFile() {
    const [jsonData, setJsonData] = useState({});
 
    const copyToClipboard = () => {
-      if (file) {
-         const textToCopy = file.name;
-         navigator.clipboard.writeText(textToCopy);
+      if (Object.keys(jsonData).length > 0) {
+         navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
       }
    };
 
