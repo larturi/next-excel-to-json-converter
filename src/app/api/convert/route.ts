@@ -1,7 +1,7 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import XLSX from 'xlsx';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
 
    const workbook = XLSX.readFile('/tmp/excel.xlsx');
    const sheet_name_list = workbook.SheetNames;

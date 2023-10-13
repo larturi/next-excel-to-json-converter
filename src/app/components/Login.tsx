@@ -6,26 +6,25 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import axios from 'axios';
 import Input from '../components/Input';
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
-    const router = useRouter();
+   const router = useRouter();
 
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const [variant, setVariant] = useState('login');
+   const [email, setEmail] = useState('');
+   const [name, setName] = useState('');
+   const [password, setPassword] = useState('');
+   const [variant, setVariant] = useState('login');
 
-    const toggleVariant = useCallback(() => {
-    setVariant((currentVariant) =>
-      currentVariant === 'login' ? 'register' : 'login',
-    );
-    }, []);
+   const toggleVariant = useCallback(() => {
+      setVariant((currentVariant) =>
+         currentVariant === 'login' ? 'register' : 'login'
+      );
+   }, []);
 
-    const login = useCallback(async () => {
+   const login = useCallback(async () => {
       if (email === '' || password === '') {
          console.log('Validation error');
          return;
@@ -50,11 +49,20 @@ const Login: React.FC<LoginProps> = () => {
       }
 
       try {
-         await axios.post('/api/register', {
+         const data = {
             name,
             email,
             password,
+         };
+
+         await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
          });
+
          login();
       } catch (error) {
          console.log(error);
@@ -63,16 +71,15 @@ const Login: React.FC<LoginProps> = () => {
 
    return (
       <div
-         className="
+         className='
             relative 
             h-full 
             w-full 
-            bg-[url('/images/hero.jpg')]
             bg-no-repeat
             bg-center
             bg-fixed
             bg-cover
-        "
+        '
       >
          <div
             className='
