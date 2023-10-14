@@ -1,8 +1,8 @@
 'use client';
 
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 export function UploadFile() {
    const [file, setFile] = useState<File>();
@@ -50,11 +50,11 @@ export function UploadFile() {
    };
 
    return (
-      <div className='bg-gray-800 text-white py-5'>
+      <div className='bg-gray-900 text-white py-5'>
          <form onSubmit={onSubmit}>
             <div className='lg:flex lg:justify-end lg:justify-items-center lg:mr-3 lg:p-0 lg:mb-3 gap-3 text-center px-3'>
-               <div className='bg-gray-700 py-2 px-3 rounded-sm hover:bg-gray-600'>
-                  <label className='bg-gray-700 text-white py-2 px-3 cursor-pointer mb-4 w-full hover:bg-gray-600'>
+               <div className='bg-gray-700 z-20 py-2 px-3 rounded-sm hover:bg-gray-600'>
+                  <label className='bg-gray-700 z-20 text-white py-2 px-3 cursor-pointer mb-4 w-full hover:bg-gray-600'>
                      {file ? file.name : 'Seleccionar archivo'}
                      <input
                         type='file'
@@ -64,22 +64,24 @@ export function UploadFile() {
                            setFile(e.target.files?.[0]);
                         }}
                         placeholder='Seleccionar archivo'
-                        className='bg-gray-700 text-white p-2 hidden'
+                        className='bg-gray-700 text-white p-2 hidden z-20'
                         accept='.xlsx, .xls'
                      />
                   </label>
                </div>
 
-               <input
-                  type='submit'
-                  value='Upload'
-                  className='bg-blue-500 text-white py-2 px-3 cursor-pointer w-full lg:w-auto mb-4 mt-4 lg:m-0 rounded-sm hover:bg-blue-700'
-               />
+               {file && (
+                  <input
+                     type='submit'
+                     value='Upload'
+                     className='bg-blue-500 text-white py-2 px-3 z-20 cursor-pointer w-full lg:w-auto mb-4 mt-4 lg:m-0 rounded-sm hover:bg-blue-700'
+                  />
+               )}
 
                {Object.keys(jsonData).length > 0 && (
                   <button
                      onClick={copyToClipboard}
-                     className='bg-green-700 text-white py-2 px-3 cursor-pointer w-full lg:w-auto mb-4 lg:m-0 rounded-sm hover:bg-green-800'
+                     className='bg-green-700 z-20 text-white py-2 px-3 cursor-pointer w-full lg:w-auto mb-4 lg:m-0 rounded-sm hover:bg-green-800'
                   >
                      Copiar al Portapapeles
                   </button>
@@ -98,7 +100,7 @@ export function UploadFile() {
                </div>
             </div>
          ) : (
-            <div className='bg-gray-900 h-[calc(100vh-100px)] flex justify-center mt-4'>
+            <div className='bg-gray-900 h-[calc(100vh-200px)] flex justify-center mt-4'>
                <p className='text-gray-600 self-center'>
                   Upload Excel File to convert to JSON
                </p>
