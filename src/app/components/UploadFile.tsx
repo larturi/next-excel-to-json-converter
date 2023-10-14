@@ -3,10 +3,12 @@
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { HiOutlineRefresh } from 'react-icons/hi';
 
 export function UploadFile() {
    const [file, setFile] = useState<File>();
    const [jsonData, setJsonData] = useState({});
+   const [loading, setLoading] = useState(false);
 
    const copyToClipboard = () => {
       if (Object.keys(jsonData).length > 0) {
@@ -19,6 +21,8 @@ export function UploadFile() {
    };
 
    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      setLoading(true);
+
       e.preventDefault();
       if (!file) {
          console.log('No file');
@@ -46,6 +50,8 @@ export function UploadFile() {
          }
       } catch (e: any) {
          console.error(e);
+      } finally {
+         setLoading(false);
       }
    };
 
@@ -90,7 +96,7 @@ export function UploadFile() {
          </form>
 
          {Object.keys(jsonData).length > 0 ? (
-            <div className='bg-gray-900 p-4'>
+            <div className='bg-gray-900 h-[calc(100vh-200px)] mt-4 overflow-y-auto'>
                <div className='overflow-x-hidden'>
                   <pre>
                      <code className='text-green-400 text-sm'>
@@ -100,9 +106,9 @@ export function UploadFile() {
                </div>
             </div>
          ) : (
-            <div className='bg-gray-900 h-[calc(100vh-200px)] flex justify-center mt-4'>
-               <p className='text-gray-600 self-center'>
-                  Upload Excel File to convert to JSON
+            <div className='bg-gray-900 h-[calc(100vh-200px)] flex justify-center mt-4 overflow-y-auto'>
+               <p className='text-gray-600 self-center -mt-10'>
+                  { loading ? <HiOutlineRefresh className='text-7xl animate-spin' /> : 'Upload Excel File to convert to JSON' }
                </p>
             </div>
          )}

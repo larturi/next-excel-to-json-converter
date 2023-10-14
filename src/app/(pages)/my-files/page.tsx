@@ -6,6 +6,9 @@ import { Session } from 'next-auth';
 import { getExtension } from '@/app/utils/get-extension';
 import { AiOutlineFileExcel } from 'react-icons/ai';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getData(session: Session) {
    const files = await prismadb.file.findMany({
       where: {
@@ -24,6 +27,7 @@ async function getData(session: Session) {
 }
 
 export default async function MyFilesPage() {
+   
    const session = await getServerSession(authOptions);
 
    if (session !== null) {
@@ -33,8 +37,8 @@ export default async function MyFilesPage() {
          <div>
             <h1 className='text-3xl font-bold p-7'>My Files</h1>
             <Sidebar />
-            <div>
-               <div className='p-4 relative overflow-x-auto w-1/2'>
+            <div className='bg-gray-900' style={{ height: 'calc(100vh - 7rem)', overflowY: 'auto' }}>
+               <div className='p-4 relative overflow-x-auto lg:w-1/2'>
                   <table className='table-auto w-full text-sm text-left'>
                      <thead className='ext-xs text-whiteuppercase text-white border-b'>
                         <tr>

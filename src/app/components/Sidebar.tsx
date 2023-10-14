@@ -33,7 +33,7 @@ export const Sidebar = async () => {
             ) : (
                <>
                   <MenuItem 
-                     href='/my-files' 
+                     href={`/my-files?time=${Date.now()}`} 
                      name='My Files' 
                      icon={<PiFilesFill className='sm:text-4 xl text-2xl text-primary group-hover:text-accent transition-all ease-in-out duration-700 sm:ml-5 flex-shrink-0'/>}
                   />

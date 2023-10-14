@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
                userId: session.user.id,
             },
          });
+         console.log('Guardado en BD');
       }
 
       return NextResponse.json({ success: true });
