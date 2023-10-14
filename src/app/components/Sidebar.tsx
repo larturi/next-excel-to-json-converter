@@ -2,9 +2,8 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import MenuItem from './MenuItem';
 import Logout from './Logout';
-import { MdModeStandby } from 'react-icons/md';
 import { BsFiletypeJson } from 'react-icons/bs';
-import { AiOutlineFileExcel } from 'react-icons/ai';
+import { AiOutlineFileExcel, AiOutlineLogin } from 'react-icons/ai';
 import { PiFilesFill } from 'react-icons/pi';
 
 
@@ -28,8 +27,8 @@ export const Sidebar = async () => {
             {session === null ? (
                <MenuItem 
                   href='/auth' 
-                  name='Login Or Register' 
-                  icon={<MdModeStandby className='sm:text-4 xl text-2xl text-primary group-hover:text-accent transition-all ease-in-out duration-700 sm:ml-5 flex-shrink-0'/>}
+                  name='Login' 
+                  icon={<AiOutlineLogin className='sm:text-4 xl text-2xl text-primary group-hover:text-accent transition-all ease-in-out duration-700 sm:ml-5 flex-shrink-0'/>}
                />
             ) : (
                <>
