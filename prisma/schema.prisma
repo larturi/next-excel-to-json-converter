@@ -21,6 +21,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   sessions       Session[]
   accounts       Account[]
+  files          File[]
 }
 
 model Session {
@@ -48,6 +49,15 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model File {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  fileUrl      String
+  createdAt    DateTime  @default(now())
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

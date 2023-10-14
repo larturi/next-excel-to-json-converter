@@ -6,12 +6,11 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { compare } from 'bcrypt';
 import prismadb from '@/app/libs/prismadb';
 
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const authOptions: AuthOptions = {
-
    adapter: PrismaAdapter(prisma),
    providers: [
       GithubProvider({
@@ -63,6 +62,18 @@ export const authOptions: AuthOptions = {
          },
       }),
    ],
+   callbacks: {
+      async session({ session, token, user }) {
+         session.user.id = token.id;
+         return session;
+      },
+      async jwt({ token, account, profile }) {
+         if (account) {
+            token.accessToken = account.access_token;
+         }
+         return token;
+      },
+   },
    pages: {
       signIn: '/auth',
    },
@@ -72,23 +83,8 @@ export const authOptions: AuthOptions = {
       secret: process.env.NEXTAUTH_JWT_SECRET,
    },
    secret: process.env.NEXTAUTH_SECRET,
-}
+};
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST};
-
-
-// import NextAuth from "next-auth"
-// import type { AuthOptions } from "next-auth"
-// import CredentialsProvider from "next-auth/providers/credentials"
-
-// export const authOptions: AuthOptions = {
-  
-
-//   session: { strategy: "jwt" }
-// }
-
-// const handler = NextAuth(authOptions)
-
-// export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
