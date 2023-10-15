@@ -7,6 +7,7 @@ import { getExtension } from '@/app/utils/get-extension';
 import { AiOutlineFileExcel } from 'react-icons/ai';
 import { BsFiletypeJson } from 'react-icons/bs';
 import { format } from 'date-fns';
+import prismadb from '@/app/libs/prismadb';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
