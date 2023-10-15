@@ -5,6 +5,8 @@ import prismadb from '@/app/libs/prismadb';
 import { uploadCloudinary } from './upload-cloudinary';
 import { uploadFile } from './upload-file';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
    const transformTo = request.nextUrl.searchParams.get('transformTo');
 
