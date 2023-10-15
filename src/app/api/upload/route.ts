@@ -42,7 +42,6 @@ export async function POST(request: Request) {
                userId: session.user.id,
             },
          });
-         console.log('Guardado en BD. Id:', newFile.id);
          return Response.json(
             { success: true, fileId: newFile.id, fileUrl: urlCloudinaryFile }, { status: 201 }
          );

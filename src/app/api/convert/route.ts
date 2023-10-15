@@ -1,10 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import XLSX from 'xlsx';
-import {
-   uploadCloudinaryByFile,
-   uploadCloudinaryByUrl,
-} from '../upload/upload-cloudinary';
+import { uploadCloudinaryByFile } from '../upload/upload-cloudinary';
 import prismadb from '@/app/libs/prismadb';
 
 export const dynamic = 'force-dynamic';
@@ -24,8 +21,6 @@ export async function POST(request: Request) {
       switch (transformTo) {
          case 'json':
             const jsonOutput = await transformToJson(fileUrl!);
-
-            console.log(jsonOutput);
 
             if (session && session.user.id) {
                // Guardo el file en Cloudinary (solo para usuarios autenticados)
@@ -48,13 +43,13 @@ export async function POST(request: Request) {
             return Response.json(jsonOutput, { status: 200 });
 
          case 'xlsx':
-            const xlsOutput = transformToExcel(fileUrl);
+            const xlsOutput = await transformToExcel(fileUrl!);
 
             if (session && session.user.id) {
                // Guardo el file en Cloudinary (solo para usuarios autenticados)
                urlCloudinaryFileConverted = await uploadCloudinaryByFile(
                   xlsOutput!,
-                  'file.json'
+                  'file.xlsx'
                );
 
                // Realiza la actualización en MongoDB
@@ -122,8 +117,16 @@ async function transformToJson(fileUrl: string) {
    return jsonOutput;
 }
 
-function transformToExcel(jsonData: any) {
+async function transformToExcel(cloudinaryJsonUrl: string) {
    try {
+      // Descargar el archivo JSON desde la URL de Cloudinary
+      const response = await fetch(cloudinaryJsonUrl);
+      if (!response.ok) {
+         throw new Error('Error al descargar el archivo JSON desde Cloudinary');
+      }
+      const jsonData = await response.json();
+
+      // Transformar el JSON en un archivo Excel
       const ws = XLSX.utils.json_to_sheet(jsonData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
@@ -131,7 +134,7 @@ function transformToExcel(jsonData: any) {
 
       return new Uint8Array(excelBuffer);
    } catch (error) {
-      console.error('Error al leer el archivo JSON:', error);
+      console.error('Error al transformar el archivo JSON a Excel:', error);
       return null;
    }
 }

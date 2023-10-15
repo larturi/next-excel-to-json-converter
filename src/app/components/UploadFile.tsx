@@ -40,6 +40,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
          const dataToUpload = new FormData();
          dataToUpload.append('file', file);
 
+         // Hace el upload a Cloudinary del archivo original y graba en Mongo
          const res1 = await fetch(`/api/upload?transformTo=${transformTo}&fileExtension=${fileExtension}`, {
             method: 'POST',
             body: dataToUpload
@@ -48,9 +49,9 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
          if (!res1.ok) {
             throw new Error(await res1.text());
          } else {
-
             const fileUploaded = await res1.json();
 
+            // Hace la conversion del file, lo sube a Cloudinary y updetea en Mongo
             const res2 = await fetch(`/api/convert?transformTo=${transformTo}&fileId=${fileUploaded.fileId}&fileUrl=${fileUploaded.fileUrl}`, {
                method: 'POST'
             });
