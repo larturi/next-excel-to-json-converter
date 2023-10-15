@@ -6,9 +6,19 @@ import { Session } from 'next-auth';
 import { getExtension } from '@/app/utils/get-extension';
 import { AiOutlineFileExcel } from 'react-icons/ai';
 import { BsFiletypeJson } from 'react-icons/bs';
+import { format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+type ExtensionToIcon = {
+   [key: string]: JSX.Element;
+ };
+
+const extensionToIcon: ExtensionToIcon = {
+  xlsx: <AiOutlineFileExcel className='text-lg' />,
+  json: <BsFiletypeJson className='text-lg' />,
+};
 
 async function getData(session: Session) {
    const files = await prismadb.file.findMany({
@@ -32,11 +42,12 @@ export default async function MyFilesPage() {
 
    if (session !== null) {
       const files = await getData(session);
-
+       
       return (
          <div>
             <h1 className='text-3xl font-bold p-7'>My Files</h1>
             <Sidebar />
+
             <div
                className='bg-gray-900'
                style={{ height: 'calc(100vh - 7rem)', overflowY: 'auto' }}
@@ -60,57 +71,25 @@ export default async function MyFilesPage() {
                         {files.map((file) => (
                            <tr key={file.id} className='border-b text-white'>
                               <td className='px-6 py-4'>
-                                 {getExtension(file.fileUrl) === 'xlsx' ? (
-                                    <a
-                                       href={file.fileUrl}
-                                       target='_blank'
-                                       rel='noopener noreferrer'
-                                    >
-                                       <span className='flex gap-3'>
-                                          <AiOutlineFileExcel className='text-lg' />{' '}
-                                          {file?.fileUrl.split('/').pop()}
-                                       </span>
-                                    </a>
-                                 ) : (
-                                    <a
-                                       href={file.fileUrl}
-                                       target='_blank'
-                                       rel='noopener noreferrer'
-                                    >
-                                       <span className='flex gap-3'>
-                                          <BsFiletypeJson className='text-lg' />{' '}
-                                          {file?.fileUrl.split('/').pop()}
-                                       </span>
-                                    </a>
-                                 )}
+                                 <a href={file.fileUrl} target='_blank' rel='noopener noreferrer'>
+                                    <span className='flex gap-3'>
+                                       {extensionToIcon[getExtension(file.fileUrl)]}
+                                       {file.fileUrl?.split('/').pop()}
+                                    </span>
+                                 </a>
                               </td>
+
                               <td className='px-6 py-4'>
-                                 {getExtension(file.convertedFileUrl) === 'xlsx' ? (
-                                    <a
-                                       href={file.convertedFileUrl}
-                                       target='_blank'
-                                       rel='noopener noreferrer'
-                                    >
-                                       <span className='flex gap-3'>
-                                          <AiOutlineFileExcel className='text-lg' />{' '}
-                                          {file?.convertedFileUrl.split('/').pop()}
-                                       </span>
-                                    </a>
-                                 ) : (
-                                    <a
-                                       href={file.convertedFileUrl}
-                                       target='_blank'
-                                       rel='noopener noreferrer'
-                                    >
-                                       <span className='flex gap-3'>
-                                          <BsFiletypeJson className='text-lg' />{' '}
-                                          {file?.convertedFileUrl.split('/').pop()}
-                                       </span>
-                                    </a>
-                                 )}
+                                 <a href={file.convertedFileUrl} target='_blank' rel='noopener noreferrer'>
+                                    <span className='flex gap-3'>
+                                       {extensionToIcon[getExtension(file.convertedFileUrl)]}
+                                       {file.convertedFileUrl?.split('/').pop()}
+                                    </span>
+                                 </a>
                               </td>
+
                               <td className='px-6 py-4'>
-                                 {file.createdAt.toISOString()}
+                                 {format(new Date(file.createdAt), "dd-MM-yyyy HH:mm:ss")}
                               </td>
                            </tr>
                         ))}

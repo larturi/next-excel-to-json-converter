@@ -13,12 +13,12 @@ export const Sidebar = async () => {
       <nav className='ml-0 fixed z-10'>
          <ul className='list-disc flex flex-col gap-5 fixed right-0 top-0 bottom-0 justify-center sm:m-10 m-3 '>
             <MenuItem
-               href='/convert-to-json'
+               href='/convert/xlsx-to-json'
                name='excel to json'
                icon={<BsFiletypeJson className='sm:text-4 xl text-2xl text-primary group-hover:text-accent transition-all ease-in-out duration-700 sm:ml-5 flex-shrink-0'/>}
             />
             <MenuItem
-               href='/convert-to-excel'
+               href='/convert/json-to-xlsx'
                name='json to excel'
                icon={<AiOutlineFileExcel className='sm:text-4 xl text-2xl text-primary group-hover:text-accent transition-all ease-in-out duration-700 sm:ml-5 flex-shrink-0'/>}
             />

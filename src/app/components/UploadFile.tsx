@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { HiOutlineRefresh } from 'react-icons/hi';
 
+export type ValidExtension = 'xlsx' | 'json';
+
 interface UploadFileProps {
-   fileExtension: 'xlsx' | 'json';
-   transformTo: 'xlsx' | 'json';
+   fileExtension: ValidExtension;
+   transformTo: ValidExtension;
 }
 
 const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) => {
