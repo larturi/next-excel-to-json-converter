@@ -53,14 +53,14 @@ model Account {
 
 model File {
   id                    String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId                String   @db.ObjectId
+  userId                String?  @db.ObjectId
   fileUrl               String
   fileExtension         String
   convertedFileUrl      String
   convertedExtension    String
   createdAt             DateTime  @default(now())
   
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User?    @relation(fields: [userId], references: [id], onDelete: Cascade) // La relación puede ser nula
 }
 
 model VerificationToken {
