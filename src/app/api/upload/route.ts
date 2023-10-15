@@ -6,6 +6,7 @@ import { uploadCloudinary } from './upload-cloudinary';
 import { uploadFile } from './upload-file';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function POST(request: NextRequest) {
    const transformTo = request.nextUrl.searchParams.get('transformTo');
