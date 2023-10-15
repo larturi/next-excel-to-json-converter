@@ -1,8 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prismadb from '@/app/libs/prismadb';
-import { uploadCloudinary } from './upload-cloudinary';
-import { uploadFile } from './upload-file';
+import { uploadCloudinaryByFile } from './upload-cloudinary';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -24,21 +23,12 @@ export async function POST(request: Request) {
    }
 
    try {
-      // Guardo en temp el file para luego convertirlo
-      let filePath = '';
-      if (transformTo === 'json') {
-         filePath = '/tmp/excel.xlsx';
-      } else {
-         filePath = '/tmp/temp.json';
-      }
-
-      await uploadFile(file, filePath);
-
       const session = await getServerSession(authOptions);
 
       if (session && session.user.id) {
          // Guardo el file en Cloudinary (solo para usuarios autenticados)
-         const urlCloudinaryFile = await uploadCloudinary(filePath);
+         // Guardo directamente en Cloudinary porque Vercel no permite upload en el filesystem
+         const urlCloudinaryFile = await uploadCloudinaryByFile(file);
 
          // Guardo en MongoDB el path de Cloudinary (solo para usuarios autenticados)
          const newFile = await prismadb.file.create({
@@ -50,12 +40,12 @@ export async function POST(request: Request) {
          });
          console.log('Guardado en BD. Id:', newFile.id);
          return Response.json(
-            { success: true, fileId: newFile.id }, { status: 201 }
+            { success: true, fileId: newFile.id, fileUrl: urlCloudinaryFile }, { status: 201 }
          );
       }
 
       return Response.json(
-         { success: true, fileId: 0 }, { status: 200 }
+         { success: true, fileId: 0, fileUrl: '' }, { status: 200 }
       );
    } catch (error) {
       if (error instanceof Error) {
