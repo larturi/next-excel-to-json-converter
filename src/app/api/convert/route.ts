@@ -78,7 +78,6 @@ export async function POST(request: Request) {
 }
 
 async function transformToJson(fileUrl: string) {
-
    // Descargar el archivo desde la URL de Cloudinary
    const response = await fetch(fileUrl);
    if (!response.ok) {
@@ -89,7 +88,9 @@ async function transformToJson(fileUrl: string) {
    // Convertir el archivo descargado a un archivo XLSX
    const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
    const sheet_name_list = workbook.SheetNames;
-   const jsonOutput: any[] = [];
+
+   // Crear un objeto en lugar de una lista
+   const jsonOutput: any = [];
 
    sheet_name_list.forEach(function (y: string | number) {
       const worksheet = workbook.Sheets[y];
@@ -117,8 +118,9 @@ async function transformToJson(fileUrl: string) {
       jsonOutput.push(data);
    });
 
-   return jsonOutput;
+   return jsonOutput[0];
 }
+
 
 async function transformToExcel(cloudinaryJsonUrl: string) {
    try {
