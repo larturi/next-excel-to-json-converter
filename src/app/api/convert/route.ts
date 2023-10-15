@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import XLSX from 'xlsx';
@@ -9,10 +8,11 @@ import prismadb from '@/app/libs/prismadb';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
    try {
-      const transformTo = request.nextUrl.searchParams.get('transformTo');
-      const fileId = request.nextUrl.searchParams.get('fileId');
+      const { searchParams } = new URL(request.url);
+      const transformTo = searchParams.get('transformTo');
+      const fileId = searchParams.get('fileId');
 
       let urlCloudinaryFileConverted;
       let filePath;
@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
                });
             }
 
-            return NextResponse.json(jsonOutput);
+            return Response.json(jsonOutput, { status: 200 });
+
          case 'xlsx':
             const xlsOutput = transformToExcel();
             filePath = '/tmp/transformed.xlsx';
@@ -58,11 +59,15 @@ export async function GET(request: NextRequest) {
                });
             }
 
-            return NextResponse.json(xlsOutput);
+            return Response.json(xlsOutput, { status: 200 });
       }
    } catch (error) {
-      console.log(error);
-      return NextResponse.json({ message: 'Error al analizar los datos JSON' });
+      if (error instanceof Error) {
+         console.log(error);
+         return Response.json(
+            { success: false, message: error.message }, { status: 400 }
+         );
+      }
    }
 }
 

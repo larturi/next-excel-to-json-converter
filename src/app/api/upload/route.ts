@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prismadb from '@/app/libs/prismadb';
@@ -8,26 +7,29 @@ import { uploadFile } from './upload-file';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function POST(request: NextRequest) {
-   const transformTo = request.nextUrl.searchParams.get('transformTo');
+export async function POST(request: Request) {
+   const { searchParams } = new URL(request.url);
+   const transformTo = searchParams.get('transformTo');
 
    const data = await request.formData();
    const file: File | null = data.get('file') as unknown as File;
 
    if (!file) {
-      return NextResponse.json({
-         success: false,
-         message: 'No se ha podido subir el archivo al servidor',
-      });
+      return Response.json(
+         {
+            success: false,
+            message: 'No se ha podido subir el archivo al servidor',
+         },{ status: 400 }
+      );
    }
 
    try {
       // Guardo en temp el file para luego convertirlo
-      let filePath = ''
+      let filePath = '';
       if (transformTo === 'json') {
-         filePath = '/tmp/excel.xlsx'
+         filePath = '/tmp/excel.xlsx';
       } else {
-         filePath = '/tmp/temp.json'
+         filePath = '/tmp/temp.json';
       }
 
       await uploadFile(file, filePath);
@@ -47,16 +49,20 @@ export async function POST(request: NextRequest) {
             },
          });
          console.log('Guardado en BD. Id:', newFile.id);
-         return NextResponse.json({ success: true,  fileId: newFile.id });
+         return Response.json(
+            { success: true, fileId: newFile.id }, { status: 201 }
+         );
       }
 
-      return NextResponse.json({ success: true,  fileId: 0 });
+      return Response.json(
+         { success: true, fileId: 0 }, { status: 200 }
+      );
    } catch (error) {
       if (error instanceof Error) {
-         return NextResponse.json({
-            success: false,
-            message: error.message,
-         });
+         console.log(error);
+         return Response.json(
+            { success: false, message: error.message }, { status: 400 }
+         );
       }
    }
 }
