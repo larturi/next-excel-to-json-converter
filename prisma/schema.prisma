@@ -52,12 +52,13 @@ model Account {
 }
 
 model File {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @db.ObjectId
-  fileUrl      String
-  createdAt    DateTime  @default(now())
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String   @db.ObjectId
+  fileUrl               String
+  convertedFileUrl      String
+  createdAt             DateTime  @default(now())
   
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

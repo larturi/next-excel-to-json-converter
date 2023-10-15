@@ -16,8 +16,8 @@ async function getData(session: Session) {
          userId: session.user.id,
       },
       orderBy: {
-         createdAt: 'desc'
-      }
+         createdAt: 'desc',
+      },
    });
 
    if (!files) {
@@ -28,7 +28,6 @@ async function getData(session: Session) {
 }
 
 export default async function MyFilesPage() {
-   
    const session = await getServerSession(authOptions);
 
    if (session !== null) {
@@ -38,30 +37,81 @@ export default async function MyFilesPage() {
          <div>
             <h1 className='text-3xl font-bold p-7'>My Files</h1>
             <Sidebar />
-            <div className='bg-gray-900' style={{ height: 'calc(100vh - 7rem)', overflowY: 'auto' }}>
-               <div className='p-4 relative overflow-x-auto lg:w-1/2'>
+            <div
+               className='bg-gray-900'
+               style={{ height: 'calc(100vh - 7rem)', overflowY: 'auto' }}
+            >
+               <div className='p-4 relative overflow-x-auto w-2/3'>
                   <table className='table-auto w-full text-sm text-left'>
                      <thead className='ext-xs text-whiteuppercase text-white border-b'>
                         <tr>
-                           <th scope="col" className="px-6 py-3">File</th>
-                           <th scope="col" className="px-6 py-3">Created</th>
+                           <th scope='col' className='px-6 py-3'>
+                              Original File
+                           </th>
+                           <th scope='col' className='px-6 py-3'>
+                              Converted File
+                           </th>
+                           <th scope='col' className='px-6 py-3'>
+                              Created
+                           </th>
                         </tr>
                      </thead>
                      <tbody>
                         {files.map((file) => (
                            <tr key={file.id} className='border-b text-white'>
                               <td className='px-6 py-4'>
-                                 {
-                                    getExtension(file.fileUrl) === 'xlsx' ?
-                                       <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
-                                          <span className='flex gap-3'><AiOutlineFileExcel className="text-lg"/> {file?.fileUrl.split('/').pop()}</span>
-                                       </a> :
-                                        <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
-                                        <span className='flex gap-3'><BsFiletypeJson className="text-lg"/> {file?.fileUrl.split('/').pop()}</span>
-                                     </a>
-                                 }
+                                 {getExtension(file.fileUrl) === 'xlsx' ? (
+                                    <a
+                                       href={file.fileUrl}
+                                       target='_blank'
+                                       rel='noopener noreferrer'
+                                    >
+                                       <span className='flex gap-3'>
+                                          <AiOutlineFileExcel className='text-lg' />{' '}
+                                          {file?.fileUrl.split('/').pop()}
+                                       </span>
+                                    </a>
+                                 ) : (
+                                    <a
+                                       href={file.fileUrl}
+                                       target='_blank'
+                                       rel='noopener noreferrer'
+                                    >
+                                       <span className='flex gap-3'>
+                                          <BsFiletypeJson className='text-lg' />{' '}
+                                          {file?.fileUrl.split('/').pop()}
+                                       </span>
+                                    </a>
+                                 )}
                               </td>
-                              <td className='px-6 py-4'>{file.createdAt.toISOString()}</td>
+                              <td className='px-6 py-4'>
+                                 {getExtension(file.convertedFileUrl) === 'xlsx' ? (
+                                    <a
+                                       href={file.convertedFileUrl}
+                                       target='_blank'
+                                       rel='noopener noreferrer'
+                                    >
+                                       <span className='flex gap-3'>
+                                          <AiOutlineFileExcel className='text-lg' />{' '}
+                                          {file?.convertedFileUrl.split('/').pop()}
+                                       </span>
+                                    </a>
+                                 ) : (
+                                    <a
+                                       href={file.convertedFileUrl}
+                                       target='_blank'
+                                       rel='noopener noreferrer'
+                                    >
+                                       <span className='flex gap-3'>
+                                          <BsFiletypeJson className='text-lg' />{' '}
+                                          {file?.convertedFileUrl.split('/').pop()}
+                                       </span>
+                                    </a>
+                                 )}
+                              </td>
+                              <td className='px-6 py-4'>
+                                 {file.createdAt.toISOString()}
+                              </td>
                            </tr>
                         ))}
                      </tbody>

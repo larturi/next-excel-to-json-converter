@@ -47,7 +47,9 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
             throw new Error(await res1.text());
          } else {
 
-            const res2 = await fetch(`/api/convert?transformTo=${transformTo}`, {
+            const fileUploaded = await res1.json();
+
+            const res2 = await fetch(`/api/convert?transformTo=${transformTo}&fileId=${fileUploaded.fileId}`, {
                method: 'GET'
             });
    
