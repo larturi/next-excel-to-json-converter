@@ -1,8 +1,8 @@
 import { cloudinary } from '@/app/config/config-cloudinary';
 
-export async function uploadCloudinary() {
+export async function uploadCloudinary(filePath: string) {
    try {
-      const uploadResult = await cloudinary.uploader.upload('/tmp/excel.xlsx', {
+      const uploadResult = await cloudinary.uploader.upload(filePath, {
          folder: 'next-excel-to-json',
          resource_type: 'raw',
       });

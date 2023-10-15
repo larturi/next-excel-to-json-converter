@@ -5,6 +5,7 @@ import { Sidebar } from '@/app/components/Sidebar';
 import { Session } from 'next-auth';
 import { getExtension } from '@/app/utils/get-extension';
 import { AiOutlineFileExcel } from 'react-icons/ai';
+import { BsFiletypeJson } from 'react-icons/bs';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -55,7 +56,9 @@ export default async function MyFilesPage() {
                                        <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
                                           <span className='flex gap-3'><AiOutlineFileExcel className="text-lg"/> {file?.fileUrl.split('/').pop()}</span>
                                        </a> :
-                                       <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">{file.fileUrl}</a>
+                                        <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                                        <span className='flex gap-3'><BsFiletypeJson className="text-lg"/> {file?.fileUrl.split('/').pop()}</span>
+                                     </a>
                                  }
                               </td>
                               <td className='px-6 py-4'>{file.createdAt.toISOString()}</td>

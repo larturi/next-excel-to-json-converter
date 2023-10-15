@@ -5,7 +5,12 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { HiOutlineRefresh } from 'react-icons/hi';
 
-export function UploadFile() {
+interface UploadFileProps {
+   fileExtension: 'xlsx' | 'json';
+   transformTo: 'xlsx' | 'json';
+}
+
+const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) => {
    const [file, setFile] = useState<File>();
    const [jsonData, setJsonData] = useState({});
    const [loading, setLoading] = useState(false);
@@ -30,23 +35,24 @@ export function UploadFile() {
       }
 
       try {
-         const data = new FormData();
-         data.set('file', file);
+         const dataToUpload = new FormData();
+         dataToUpload.set('file', file);
 
-         const res = await fetch('/api/upload', {
+         const res1 = await fetch(`/api/upload?transformTo=${transformTo}`, {
             method: 'POST',
-            body: data,
+            body: dataToUpload,
          });
 
-         if (!res.ok) {
-            throw new Error(await res.text());
+         if (!res1.ok) {
+            throw new Error(await res1.text());
          } else {
-            const res = await fetch('/api/convert', {
-               method: 'POST',
-            });
 
-            const data = await res.json();
-            setJsonData(data);
+            const res2 = await fetch(`/api/convert?transformTo=${transformTo}`, {
+               method: 'GET'
+            });
+   
+            const transformedData = await res2.json();
+            setJsonData(transformedData);
          }
       } catch (e: any) {
          console.error(e);
@@ -55,24 +61,36 @@ export function UploadFile() {
       }
    };
 
+   let allowedExtensions = '';
+
+   if (fileExtension === 'xlsx') {
+      allowedExtensions = '.xlsx, .xls';
+   } else if (fileExtension === 'json') {
+      allowedExtensions = '.json, .txt';
+   }
+
    return (
       <div className='bg-gray-900 text-white py-5'>
          <form onSubmit={onSubmit}>
             <div className='lg:flex lg:justify-end lg:justify-items-center lg:mr-3 lg:p-0 lg:mb-3 gap-3 text-center px-3'>
                <div className='bg-gray-700 z-20 py-2 px-3 rounded-sm hover:bg-gray-600'>
                   <label className='bg-gray-700 z-20 text-white py-2 px-3 cursor-pointer mb-4 w-full hover:bg-gray-600'>
-                     {file ? file.name : 'Seleccionar archivo'}
-                     <input
-                        type='file'
-                        name='file'
-                        onChange={(e) => {
-                           setJsonData({});
-                           setFile(e.target.files?.[0]);
-                        }}
-                        placeholder='Seleccionar archivo'
-                        className='bg-gray-700 text-white p-2 hidden z-20'
-                        accept='.xlsx, .xls'
-                     />
+                     {file
+                        ? file.name
+                        : `Seleccionar archivo .${fileExtension}`}
+                     
+                        <input
+                           type='file'
+                           name='file'
+                           onChange={(e) => {
+                              setJsonData({});
+                              setFile(e.target.files?.[0]);
+                           }}
+                           placeholder='Seleccionar archivo'
+                           className='bg-gray-700 text-white p-2 hidden z-20'
+                           accept={allowedExtensions}
+                        />
+                  
                   </label>
                </div>
 
@@ -108,10 +126,18 @@ export function UploadFile() {
          ) : (
             <div className='bg-gray-900 h-[calc(100vh-200px)] flex justify-center mt-4 overflow-y-auto'>
                <p className='text-gray-600 self-center -mt-10'>
-                  { loading ? <HiOutlineRefresh className='text-7xl animate-spin' /> : 'Upload Excel File to convert to JSON' }
+                  {loading ? (
+                     <HiOutlineRefresh className='text-7xl animate-spin' />
+                  ) : fileExtension === 'xlsx' ? (
+                     'Upload Excel File to convert to JSON'
+                  ) : (
+                     'Upload JSON File to convert to Excel'
+                  )}
                </p>
             </div>
          )}
       </div>
    );
-}
+};
+
+export default UploadFile;

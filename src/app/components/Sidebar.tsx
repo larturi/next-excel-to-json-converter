@@ -6,7 +6,6 @@ import { BsFiletypeJson } from 'react-icons/bs';
 import { AiOutlineFileExcel, AiOutlineLogin } from 'react-icons/ai';
 import { PiFilesFill } from 'react-icons/pi';
 
-
 export const Sidebar = async () => {
    const session = await getServerSession(authOptions);
 

@@ -3,9 +3,11 @@ import { getServerSession } from 'next-auth/next';
 import prismadb from '@/app/libs/prismadb';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { uploadCloudinary } from './upload-cloudinary';
-import { uploadExcel } from './upload-xlsx';
+import { uploadFile } from './upload-file';
 
 export async function POST(request: NextRequest) {
+   const transformTo = request.nextUrl.searchParams.get('transformTo');
+
    const data = await request.formData();
    const file: File | null = data.get('file') as unknown as File;
 
@@ -17,14 +19,21 @@ export async function POST(request: NextRequest) {
    }
 
    try {
-      // Guardo en temp el Excel para luego convertirlo a JSON
-      await uploadExcel(file);
+      // Guardo en temp el file para luego convertirlo
+      let filePath = ''
+      if (transformTo === 'json') {
+         filePath = '/tmp/excel.xlsx'
+      } else {
+         filePath = '/tmp/temp.json'
+      }
+
+      await uploadFile(file, filePath);
 
       const session = await getServerSession(authOptions);
 
       if (session && session.user.id) {
          // Guardo el file en Cloudinary (solo para usuarios autenticados)
-         const urlCloudinaryFile = await uploadCloudinary();
+         const urlCloudinaryFile = await uploadCloudinary(filePath);
 
          // Guardo en MongoDB el path de Cloudinary (solo para usuarios autenticados)
          await prismadb.file.create({
