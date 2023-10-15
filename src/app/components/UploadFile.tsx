@@ -19,6 +19,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
    const [file, setFile] = useState<File>();
    const [jsonData, setJsonData] = useState({});
    const [loading, setLoading] = useState(false);
+   const [excelDownloadUrl, setExcelDownloadUrl] = useState('');
 
    const copyToClipboard = () => {
       if (Object.keys(jsonData).length > 0) {
@@ -27,6 +28,12 @@ const UploadFile: React.FC<UploadFileProps> = ({
             position: 'bottom-right',
             autoClose: 1000,
          });
+      }
+   };
+
+   const descargarExcel = () => {
+      if (excelDownloadUrl) {
+         window.open(excelDownloadUrl);
       }
    };
 
@@ -63,8 +70,15 @@ const UploadFile: React.FC<UploadFileProps> = ({
                { method: 'POST' }
             );
 
-            const transformedData = await res2.json();
-            setJsonData(transformedData);
+            if (fileExtension === 'xlsx') {
+               const transformedData = await res2.json();
+               setJsonData(transformedData);
+            }
+
+            if (fileExtension === 'json') {
+               const transformedData = await res2.json();
+               setExcelDownloadUrl(transformedData.urlCloudinaryFileConverted);
+            }
          }
       } catch (e: any) {
          console.error(e);
@@ -113,12 +127,22 @@ const UploadFile: React.FC<UploadFileProps> = ({
                   />
                )}
 
-               {Object.keys(jsonData).length > 0 && (
+               {Object.keys(jsonData).length > 0 &&
+                  fileExtension === 'xlsx' && (
+                     <button
+                        onClick={copyToClipboard}
+                        className='bg-green-700 z-20 text-white py-2 px-3 cursor-pointer w-full lg:w-auto mb-4 lg:m-0 rounded-sm hover:bg-green-800'
+                     >
+                        Copiar al Portapapeles
+                     </button>
+                  )}
+
+               {excelDownloadUrl !== '' && fileExtension === 'json' && (
                   <button
-                     onClick={copyToClipboard}
+                     onClick={descargarExcel}
                      className='bg-green-700 z-20 text-white py-2 px-3 cursor-pointer w-full lg:w-auto mb-4 lg:m-0 rounded-sm hover:bg-green-800'
                   >
-                     Copiar al Portapapeles
+                     Descargar Excel
                   </button>
                )}
             </div>

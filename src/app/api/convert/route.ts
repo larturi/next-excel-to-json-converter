@@ -53,7 +53,6 @@ export async function POST(request: Request) {
                urlCloudinaryFileConverted = await uploadCloudinaryByFile(
                   xlsOutput!,
                   `${fileName}.xlsx`
-
                );
 
                // Realiza la actualización en MongoDB
@@ -65,7 +64,7 @@ export async function POST(request: Request) {
                });
             }
 
-            return Response.json(xlsOutput, { status: 200 });
+            return Response.json({xlsOutput, urlCloudinaryFileConverted}, { status: 200 });
       }
    } catch (error) {
       if (error instanceof Error) {
