@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prismadb from '@/app/libs/prismadb';
 import { uploadCloudinaryByFile } from './upload-cloudinary';
+import { generateRandomName } from '@/app/utils/random-name';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -10,7 +11,8 @@ export async function POST(request: Request) {
    const { searchParams } = new URL(request.url);
    const transformTo = searchParams.get('transformTo');
    const fileExtension = searchParams.get('fileExtension');
-   const fileName = `file.${fileExtension}`;
+
+   const fileName = generateRandomName(fileExtension!);
 
    const data = await request.formData();
    const file: File | null = data.get('file') as unknown as File;
@@ -43,12 +45,22 @@ export async function POST(request: Request) {
             },
          });
          return Response.json(
-            { success: true, fileId: newFile.id, fileUrl: urlCloudinaryFile }, { status: 201 }
+            { 
+               success: true, 
+               fileId: newFile.id, 
+               fileUrl: urlCloudinaryFile,
+               fileName: fileName
+            }, { status: 201 }
          );
       }
 
       return Response.json(
-         { success: true, fileId: 0, fileUrl: '' }, { status: 200 }
+         { 
+            success: true, 
+            fileId: '',
+            fileUrl: '',
+            fileName: ''
+         }, { status: 200 }
       );
    } catch (error) {
       if (error instanceof Error) {

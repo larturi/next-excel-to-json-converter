@@ -12,7 +12,10 @@ interface UploadFileProps {
    transformTo: ValidExtension;
 }
 
-const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) => {
+const UploadFile: React.FC<UploadFileProps> = ({
+   fileExtension,
+   transformTo,
+}) => {
    const [file, setFile] = useState<File>();
    const [jsonData, setJsonData] = useState({});
    const [loading, setLoading] = useState(false);
@@ -41,10 +44,13 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
          dataToUpload.append('file', file);
 
          // Hace el upload a Cloudinary del archivo original y graba en Mongo
-         const res1 = await fetch(`/api/upload?transformTo=${transformTo}&fileExtension=${fileExtension}`, {
-            method: 'POST',
-            body: dataToUpload
-         });
+         const res1 = await fetch(
+            `/api/upload?transformTo=${transformTo}&fileExtension=${fileExtension}`,
+            {
+               method: 'POST',
+               body: dataToUpload,
+            }
+         );
 
          if (!res1.ok) {
             throw new Error(await res1.text());
@@ -52,10 +58,11 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
             const fileUploaded = await res1.json();
 
             // Hace la conversion del file, lo sube a Cloudinary y updetea en Mongo
-            const res2 = await fetch(`/api/convert?transformTo=${transformTo}&fileId=${fileUploaded.fileId}&fileUrl=${fileUploaded.fileUrl}`, {
-               method: 'POST'
-            });
-   
+            const res2 = await fetch(
+               `/api/convert?transformTo=${transformTo}&fileId=${fileUploaded.fileId}&fileUrl=${fileUploaded.fileUrl}&fileName=${fileUploaded.fileName}`,
+               { method: 'POST' }
+            );
+
             const transformedData = await res2.json();
             setJsonData(transformedData);
          }
@@ -83,19 +90,18 @@ const UploadFile: React.FC<UploadFileProps> = ({ fileExtension, transformTo }) =
                      {file
                         ? file.name
                         : `Seleccionar archivo .${fileExtension}`}
-                     
-                        <input
-                           type='file'
-                           name='file'
-                           onChange={(e) => {
-                              setJsonData({});
-                              setFile(e.target.files?.[0]);
-                           }}
-                           placeholder='Seleccionar archivo'
-                           className='bg-gray-700 text-white p-2 hidden z-20'
-                           accept={allowedExtensions}
-                        />
-                  
+
+                     <input
+                        type='file'
+                        name='file'
+                        onChange={(e) => {
+                           setJsonData({});
+                           setFile(e.target.files?.[0]);
+                        }}
+                        placeholder='Seleccionar archivo'
+                        className='bg-gray-700 text-white p-2 hidden z-20'
+                        accept={allowedExtensions}
+                     />
                   </label>
                </div>
 

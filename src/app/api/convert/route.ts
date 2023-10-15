@@ -13,6 +13,9 @@ export async function POST(request: Request) {
       const transformTo = searchParams.get('transformTo');
       const fileId = searchParams.get('fileId');
       const fileUrl = searchParams.get('fileUrl');
+      const fileNameWithExtension = searchParams.get('fileName');
+      const partes = fileNameWithExtension!.split('.');
+      const fileName = partes[0];
 
       let urlCloudinaryFileConverted;
 
@@ -28,7 +31,7 @@ export async function POST(request: Request) {
 
                urlCloudinaryFileConverted = await uploadCloudinaryByFile(
                   jsonAsString,
-                  'file.json'
+                  `${fileName}.json`
                );
 
                // Realiza la actualización en MongoDB
@@ -49,7 +52,8 @@ export async function POST(request: Request) {
                // Guardo el file en Cloudinary (solo para usuarios autenticados)
                urlCloudinaryFileConverted = await uploadCloudinaryByFile(
                   xlsOutput!,
-                  'file.xlsx'
+                  `${fileName}.xlsx`
+
                );
 
                // Realiza la actualización en MongoDB
