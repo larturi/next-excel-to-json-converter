@@ -1,14 +1,16 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import XLSX from 'xlsx';
-import fs from 'fs';
-import { uploadCloudinaryByUrl } from '../upload/upload-cloudinary';
+import {
+   uploadCloudinaryByFile,
+   uploadCloudinaryByUrl,
+} from '../upload/upload-cloudinary';
 import prismadb from '@/app/libs/prismadb';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
    try {
       const { searchParams } = new URL(request.url);
       const transformTo = searchParams.get('transformTo');
@@ -16,20 +18,23 @@ export async function GET(request: Request) {
       const fileUrl = searchParams.get('fileUrl');
 
       let urlCloudinaryFileConverted;
-      let filePath;
 
       const session = await getServerSession(authOptions);
 
       switch (transformTo) {
          case 'json':
-            const jsonOutput = transformToJson();
-            const jsonOutputString = JSON.stringify(jsonOutput);
-            // filePath = '/tmp/transformed.json';
-            // fs.writeFileSync(filePath, jsonOutputString);
+            const jsonOutput = await transformToJson(fileUrl!);
+
+            console.log(jsonOutput);
 
             if (session && session.user.id) {
                // Guardo el file en Cloudinary (solo para usuarios autenticados)
-               urlCloudinaryFileConverted = await uploadCloudinaryByUrl(fileUrl!);
+               const jsonAsString = JSON.stringify(jsonOutput);
+
+               urlCloudinaryFileConverted = await uploadCloudinaryByFile(
+                  jsonAsString,
+                  'file.json'
+               );
 
                // Realiza la actualización en MongoDB
                await prismadb.file.update({
@@ -43,13 +48,14 @@ export async function GET(request: Request) {
             return Response.json(jsonOutput, { status: 200 });
 
          case 'xlsx':
-            const xlsOutput = transformToExcel();
-            filePath = '/tmp/transformed.xlsx';
-            fs.writeFileSync(filePath, Buffer.from(xlsOutput!));
+            const xlsOutput = transformToExcel(fileUrl);
 
             if (session && session.user.id) {
                // Guardo el file en Cloudinary (solo para usuarios autenticados)
-               urlCloudinaryFileConverted = await uploadCloudinaryByUrl(fileUrl!);
+               urlCloudinaryFileConverted = await uploadCloudinaryByFile(
+                  xlsOutput!,
+                  'file.json'
+               );
 
                // Realiza la actualización en MongoDB
                await prismadb.file.update({
@@ -66,21 +72,32 @@ export async function GET(request: Request) {
       if (error instanceof Error) {
          console.log(error);
          return Response.json(
-            { success: false, message: error.message }, { status: 400 }
+            { success: false, message: error.message },
+            { status: 400 }
          );
       }
    }
 }
 
-function transformToJson() {
-   const workbook = XLSX.readFile('/tmp/excel.xlsx');
+async function transformToJson(fileUrl: string) {
+
+   // Descargar el archivo desde la URL de Cloudinary
+   const response = await fetch(fileUrl);
+   if (!response.ok) {
+      throw new Error('Error al descargar el archivo desde Cloudinary');
+   }
+   const data = await response.arrayBuffer();
+
+   // Convertir el archivo descargado a un archivo XLSX
+   const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
    const sheet_name_list = workbook.SheetNames;
-   var jsonOutput: any[] = [];
+   const jsonOutput: any[] = [];
 
    sheet_name_list.forEach(function (y: string | number) {
       const worksheet = workbook.Sheets[y];
       const headers: { [key: string]: any } = {};
       let data = [];
+
       for (const z in worksheet) {
          if (z[0] === '!') continue;
 
@@ -96,18 +113,17 @@ function transformToJson() {
          if (!data[row]) data[row] = {} as { [key: string]: any };
          data[row][headers[col]] = value;
       }
+
       data.shift();
       data.shift();
-      jsonOutput = data;
+      jsonOutput.push(data);
    });
 
    return jsonOutput;
 }
 
-function transformToExcel() {
+function transformToExcel(jsonData: any) {
    try {
-      const jsonData = JSON.parse(fs.readFileSync('/tmp/temp.json', 'utf8'));
-
       const ws = XLSX.utils.json_to_sheet(jsonData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');

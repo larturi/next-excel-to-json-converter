@@ -74,7 +74,7 @@ export default async function MyFilesPage() {
                               <td className='px-6 py-4'>
                                  <a href={file.fileUrl} target='_blank' rel='noopener noreferrer'>
                                     <span className='flex gap-3'>
-                                       {extensionToIcon[getExtension(file.fileUrl)]}
+                                       {extensionToIcon[file.fileExtension]}
                                        {file.fileUrl?.split('/').pop()}
                                     </span>
                                  </a>
@@ -83,7 +83,7 @@ export default async function MyFilesPage() {
                               <td className='px-6 py-4'>
                                  <a href={file.convertedFileUrl} target='_blank' rel='noopener noreferrer'>
                                     <span className='flex gap-3'>
-                                       {extensionToIcon[getExtension(file.convertedFileUrl)]}
+                                       {extensionToIcon[file.convertedExtension]}
                                        {file.convertedFileUrl?.split('/').pop()}
                                     </span>
                                  </a>

@@ -9,6 +9,8 @@ export const revalidate = 0;
 export async function POST(request: Request) {
    const { searchParams } = new URL(request.url);
    const transformTo = searchParams.get('transformTo');
+   const fileExtension = searchParams.get('fileExtension');
+   const fileName = `file.${fileExtension}`;
 
    const data = await request.formData();
    const file: File | null = data.get('file') as unknown as File;
@@ -28,13 +30,15 @@ export async function POST(request: Request) {
       if (session && session.user.id) {
          // Guardo el file en Cloudinary (solo para usuarios autenticados)
          // Guardo directamente en Cloudinary porque Vercel no permite upload en el filesystem
-         const urlCloudinaryFile = await uploadCloudinaryByFile(file);
+         const urlCloudinaryFile = await uploadCloudinaryByFile(file, fileName);
 
          // Guardo en MongoDB el path de Cloudinary (solo para usuarios autenticados)
          const newFile = await prismadb.file.create({
             data: {
                fileUrl: urlCloudinaryFile,
+               fileExtension: fileExtension!,
                convertedFileUrl: '',
+               convertedExtension: transformTo!,
                userId: session.user.id,
             },
          });

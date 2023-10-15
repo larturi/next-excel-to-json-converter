@@ -1,6 +1,6 @@
 import { cloudinary } from '@/app/config/config-cloudinary';
 
-export async function uploadCloudinaryByFile(file: File) {
+export async function uploadCloudinaryByFile(file: any, public_id: string) {
    try {
       const arrayBuffer = await new Response(file).arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -8,7 +8,8 @@ export async function uploadCloudinaryByFile(file: File) {
       const response: any = await new Promise((resolve, reject) => {
          cloudinary.uploader.upload_stream({
             folder: 'next-excel-to-json',
-            resource_type: 'auto',
+            resource_type: 'raw',
+            public_id: public_id
          }, (err, result) => {
             if (err) {
                reject(err);
