@@ -51,40 +51,6 @@ export async function POST(request: Request) {
          },
          { status: 201 }
       );
-
-      // if (session && session.user.id) {
-      //    // Guardo el file en Cloudinary (solo para usuarios autenticados)
-      //    // Guardo directamente en Cloudinary porque Vercel no permite upload en el filesystem
-      //    const urlCloudinaryFile = await uploadCloudinaryByFile(file, fileName);
-
-      //    // Guardo en MongoDB el path de Cloudinary (solo para usuarios autenticados)
-      //    const newFile = await prismadb.file.create({
-      //       data: {
-      //          fileUrl: urlCloudinaryFile,
-      //          fileExtension: fileExtension!,
-      //          convertedFileUrl: '',
-      //          convertedExtension: transformTo!,
-      //          userId: session.user.id,
-      //       },
-      //    });
-      //    return Response.json(
-      //       {
-      //          success: true,
-      //          fileId: newFile.id,
-      //          fileUrl: urlCloudinaryFile,
-      //          fileName: fileName
-      //       }, { status: 201 }
-      //    );
-      // }
-
-      // return Response.json(
-      //    {
-      //       success: true,
-      //       fileId: '',
-      //       fileUrl: '',
-      //       fileName: ''
-      //    }, { status: 200 }
-      // );
    } catch (error) {
       if (error instanceof Error) {
          console.log(error);
