@@ -16,7 +16,7 @@
 - Instalar dependencias
   
 ```bash
-nvm use 18.17.0
+nvm use 20.9.0
 pnpm install
 ```
 
@@ -30,7 +30,7 @@ npx prisma generate
 Levantar la aplicación
 
 ```bash
-nvm use 18.17.0
+nvm use 20.9.0
 
 pnpm dev
 ```
