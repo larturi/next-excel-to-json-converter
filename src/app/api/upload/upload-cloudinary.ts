@@ -1,41 +1,46 @@
-import { cloudinary } from '@/app/config/config-cloudinary';
+import { cloudinary } from '@/app/config/config-cloudinary'
 
 export async function uploadCloudinaryByFile(file: any, public_id: string) {
-   try {
-      const arrayBuffer = await new Response(file).arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+  try {
+    const arrayBuffer = await new Response(file).arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
 
-      const response: any = await new Promise((resolve, reject) => {
-         cloudinary.uploader.upload_stream({
+    const response: any = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
             folder: 'next-excel-to-json',
             resource_type: 'raw',
+            upload_preset: 'excel_json_converter',
             public_id: public_id
-         }, (err, result) => {
+          },
+          (err, result) => {
             if (err) {
-               reject(err);
+              reject(err)
             }
-            resolve(result);
-         }).end(buffer);
-      }) 
+            resolve(result)
+          }
+        )
+        .end(buffer)
+    })
 
-      return response.secure_url;
-   } catch (error) {
-      console.log(error);
-      throw new Error('Error al intentar subir el archivo a Cloudinary');
-   }
+    return response.secure_url
+  } catch (error) {
+    console.log(error)
+    throw new Error('Error al intentar subir el archivo a Cloudinary')
+  }
 }
 
-
 export async function uploadCloudinaryByUrl(fileUrl: string) {
-   try {
-      console.log(fileUrl);
-      const response = await cloudinary.uploader.upload(fileUrl, {
-         folder: 'next-excel-to-json',
-         resource_type: 'raw',
-      });
-      return response.secure_url;
-   } catch (error) {
-      console.log(error);
-      throw new Error('Error al intentar subir el archivo a Cloudinary (uploadCloudinaryByUrl)');
-   }
+  try {
+    console.log(fileUrl)
+    const response = await cloudinary.uploader.upload(fileUrl, {
+      folder: 'next-excel-to-json',
+      resource_type: 'raw'
+    })
+    return response.secure_url
+  } catch (error) {
+    console.log(error)
+    throw new Error('Error al intentar subir el archivo a Cloudinary (uploadCloudinaryByUrl)')
+  }
 }
