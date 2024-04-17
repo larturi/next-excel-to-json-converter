@@ -11,23 +11,26 @@
 
 ## Getting Started
 
-First, run the development server:
+- Generar el archivo .env en base a ,env.template
 
+- Instalar dependencias
+  
 ```bash
 nvm use 18.17.0
-
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Prisma
+Configurar la base de datos con Prisma
 
 ```bash
 npx prisma db push
 npx prisma generate
+```
+
+Levantar la aplicación
+
+```bash
+nvm use 18.17.0
+
+pnpm dev
 ```
