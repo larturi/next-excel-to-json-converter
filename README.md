@@ -14,6 +14,8 @@
 First, run the development server:
 
 ```bash
+nvm use 18.17.0
+
 npm run dev
 # or
 yarn dev
@@ -22,7 +24,6 @@ pnpm dev
 # or
 bun dev
 ```
-
 
 Prisma
 
